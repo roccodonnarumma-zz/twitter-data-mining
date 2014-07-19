@@ -17,4 +17,5 @@ dependency-reduced-pom.xml
 .classpath
 .project
 
-src/main/resources/twitter/stream/stream.properties
+
+storm-topology/src/main/resources/twitter/config.properties
