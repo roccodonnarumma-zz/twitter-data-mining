@@ -3,6 +3,9 @@ package com.project.topology;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import backtype.storm.Config;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
@@ -13,6 +16,7 @@ import com.project.bolt.HdfsBolt;
 import com.project.spout.TwitterStreamSpout;
 
 public class TwitterSentimentTopology {
+    private static final Logger LOG = LoggerFactory.getLogger(TwitterSentimentTopology.class);
 
     public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException, IOException {
         Properties properties = new Properties();
@@ -20,6 +24,8 @@ public class TwitterSentimentTopology {
 
         //TODO externalize
         String[] tracks = new String[] { "movies" };
+
+        LOG.debug("Using tracks: {}", tracks);
 
         TopologyBuilder builder = new TopologyBuilder();
 
@@ -36,5 +42,6 @@ public class TwitterSentimentTopology {
         conf.setNumWorkers(2);
 
         StormSubmitter.submitTopology("twitter-sentiment", conf, builder.createTopology());
+        LOG.debug("Submitted topology twitter-sentiment");
     }
 }
