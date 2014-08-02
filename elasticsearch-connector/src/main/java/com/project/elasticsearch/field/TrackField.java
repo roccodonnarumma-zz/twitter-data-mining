@@ -1,12 +1,12 @@
-package com.project.elasticsearch.track;
+package com.project.elasticsearch.field;
 
-public enum TrackFields {
+public enum TrackField {
 
     TRACKS("tracks");
 
     private String name;
 
-    private TrackFields(String name) {
+    private TrackField(String name) {
         this.name = name;
     }
 

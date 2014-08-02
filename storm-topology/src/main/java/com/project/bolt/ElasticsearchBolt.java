@@ -9,6 +9,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 
+import com.project.elasticsearch.field.TweetField;
 import com.project.elasticsearch.index.ElasticsearchIndex;
 import com.project.elasticsearch.type.Type;
 import com.project.model.Sentiment;
@@ -30,12 +31,13 @@ public class ElasticsearchBolt extends BaseBasicBolt {
                 Sentiment sentiment = (Sentiment)obj;
                 Status status = sentiment.getStatus();
                 Map<String, Object> map = new HashMap<>();
-                map.put("movie_name", getMovieName(status.getText()));
-                map.put("sentiment", sentiment.getSentiment());
-                map.put("text", status.getText());
-                map.put("created_at", status.getCreatedAt());
-                map.put("geo_location", status.getGeoLocation());
-                map.put("place", status.getPlace());
+                map.put(TweetField.MOVIE_NAME.getName(), getMovieName(status.getText()));
+                map.put(TweetField.SENTIMENT.getName(), sentiment.getSentiment());
+                map.put(TweetField.TEXT.getName(), status.getText());
+                map.put(TweetField.CREATED_AT.getName(), status.getCreatedAt());
+                map.put(TweetField.GEO_LOCATION.getName(), status.getGeoLocation());
+                map.put(TweetField.PLACE.getName(), status.getPlace());
+                map.put(TweetField.TIMEZONE.getName(), status.getUser().getTimeZone());
                 index.index(Type.TWEET, map);
             }
         }
