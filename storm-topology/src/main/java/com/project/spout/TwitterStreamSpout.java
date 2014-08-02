@@ -25,6 +25,8 @@ import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
 public class TwitterStreamSpout extends BaseRichSpout {
+    private static final long serialVersionUID = 5833104464703359992L;
+
     private static final Logger LOG = LoggerFactory.getLogger(TwitterStreamSpout.class);
 
     private BlockingQueue<Status> queue;
@@ -112,5 +114,4 @@ public class TwitterStreamSpout extends BaseRichSpout {
             twitterStream.shutdown();
         }
     }
-
 }

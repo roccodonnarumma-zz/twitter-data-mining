@@ -13,6 +13,7 @@ import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy;
 import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
 import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
 import org.apache.storm.hdfs.bolt.sync.SyncPolicy;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,11 @@ import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 
+import com.project.bolt.ElasticsearchBolt;
+import com.project.bolt.SentimentBolt;
+import com.project.elasticsearch.index.ElasticsearchIndex;
+import com.project.elasticsearch.track.TrackFields;
+import com.project.elasticsearch.type.Type;
 import com.project.spout.TwitterStreamSpout;
 
 public class TwitterSentimentTopology {
@@ -31,8 +37,7 @@ public class TwitterSentimentTopology {
         Properties properties = new Properties();
         properties.load(TwitterSentimentTopology.class.getClassLoader().getResourceAsStream("twitter/config.properties"));
 
-        //TODO externalize
-        String[] tracks = new String[] { "movies" };
+        String[] tracks = getTracks();
 
         LOG.debug("Using tracks: {}", tracks);
 
@@ -44,19 +49,21 @@ public class TwitterSentimentTopology {
                 properties.getProperty("twitter.tokenSecret"),
                 tracks));
 
-        RecordFormat format = new DelimitedRecordFormat().withFieldDelimiter("|");
+        RecordFormat format = new DelimitedRecordFormat().withFieldDelimiter(properties.getProperty("hdfs.field.delimiter"));
         SyncPolicy syncPolicy = new CountSyncPolicy(10);
-        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, Units.MB);
-        FileNameFormat fileNameFormat = new DefaultFileNameFormat().withPath("/tweets/");
+        FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(Long.parseLong(properties.getProperty("hdfs.file.size")), Units.MB);
+        FileNameFormat fileNameFormat = new DefaultFileNameFormat().withPath(properties.getProperty("hdfs.folder.name"));
 
         HdfsBolt bolt = new HdfsBolt()
-                .withFsUrl("hdfs://localhost:8020")
+                .withFsUrl("hdfs://" + properties.getProperty("hdfs.address"))
                 .withFileNameFormat(fileNameFormat)
                 .withRecordFormat(format)
                 .withRotationPolicy(rotationPolicy)
                 .withSyncPolicy(syncPolicy);
 
         builder.setBolt("hdfs", bolt).shuffleGrouping("twitter");
+        builder.setBolt("sentiment", new SentimentBolt()).shuffleGrouping("twitter");
+        builder.setBolt("index", new ElasticsearchBolt()).shuffleGrouping("sentiment");
 
         Config conf = new Config();
         conf.setDebug(true);
@@ -64,5 +71,15 @@ public class TwitterSentimentTopology {
 
         StormSubmitter.submitTopology("twitter-sentiment", conf, builder.createTopology());
         LOG.debug("Submitted topology twitter-sentiment");
+    }
+
+    private static String[] getTracks() {
+        ElasticsearchIndex index = ElasticsearchIndex.INSTANCE;
+        JSONObject object = index.get(Type.TRACK, "1");
+        if ((object == null) || (object.getString(TrackFields.TRACKS.getName()) == null)) {
+            throw new RuntimeException("Could not find tracks");
+        }
+
+        return object.getString(TrackFields.TRACKS.getName()).split(",");
     }
 }
