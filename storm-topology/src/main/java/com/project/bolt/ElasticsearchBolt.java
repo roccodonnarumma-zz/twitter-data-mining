@@ -12,11 +12,13 @@ import backtype.storm.tuple.Tuple;
 import com.project.elasticsearch.index.ElasticsearchIndex;
 import com.project.elasticsearch.type.Type;
 import com.project.model.Sentiment;
+import com.project.service.track.TrackService;
 
 public class ElasticsearchBolt extends BaseBasicBolt {
     private static final long serialVersionUID = 3361080905463165886L;
 
     private ElasticsearchIndex index;
+    private String[] tracks;
 
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
@@ -28,7 +30,7 @@ public class ElasticsearchBolt extends BaseBasicBolt {
                 Sentiment sentiment = (Sentiment)obj;
                 Status status = sentiment.getStatus();
                 Map<String, Object> map = new HashMap<>();
-                map.put("movie_name", "name");
+                map.put("movie_name", getMovieName(status.getText()));
                 map.put("sentiment", sentiment.getSentiment());
                 map.put("text", status.getText());
                 map.put("created_at", status.getCreatedAt());
@@ -37,6 +39,21 @@ public class ElasticsearchBolt extends BaseBasicBolt {
                 index.index(Type.TWEET, map);
             }
         }
+    }
+
+    private String getMovieName(String text) {
+        if (tracks == null) {
+            tracks = TrackService.INSTANCE.getTracks();
+        }
+
+        String textLower = text.toLowerCase();
+        for (String track : tracks) {
+            if (textLower.contains(track.toLowerCase())) {
+                return track;
+            }
+        }
+
+        return null;
     }
 
     @Override

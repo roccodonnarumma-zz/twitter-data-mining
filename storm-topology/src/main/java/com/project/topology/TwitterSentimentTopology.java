@@ -13,7 +13,6 @@ import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy;
 import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
 import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
 import org.apache.storm.hdfs.bolt.sync.SyncPolicy;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +24,7 @@ import backtype.storm.topology.TopologyBuilder;
 
 import com.project.bolt.ElasticsearchBolt;
 import com.project.bolt.SentimentBolt;
-import com.project.elasticsearch.index.ElasticsearchIndex;
-import com.project.elasticsearch.track.TrackFields;
-import com.project.elasticsearch.type.Type;
+import com.project.service.track.TrackService;
 import com.project.spout.TwitterStreamSpout;
 
 public class TwitterSentimentTopology {
@@ -37,7 +34,7 @@ public class TwitterSentimentTopology {
         Properties properties = new Properties();
         properties.load(TwitterSentimentTopology.class.getClassLoader().getResourceAsStream("twitter/config.properties"));
 
-        String[] tracks = getTracks();
+        String[] tracks = TrackService.INSTANCE.getTracks();
 
         LOG.debug("Using tracks: {}", tracks);
 
@@ -71,15 +68,5 @@ public class TwitterSentimentTopology {
 
         StormSubmitter.submitTopology("twitter-sentiment", conf, builder.createTopology());
         LOG.debug("Submitted topology twitter-sentiment");
-    }
-
-    private static String[] getTracks() {
-        ElasticsearchIndex index = ElasticsearchIndex.INSTANCE;
-        JSONObject object = index.get(Type.TRACK, "1");
-        if ((object == null) || (object.getString(TrackFields.TRACKS.getName()) == null)) {
-            throw new RuntimeException("Could not find tracks");
-        }
-
-        return object.getString(TrackFields.TRACKS.getName()).split(",");
     }
 }
