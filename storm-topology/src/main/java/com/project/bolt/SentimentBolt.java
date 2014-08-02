@@ -1,9 +1,7 @@
 package com.project.bolt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import twitter4j.Status;
+import twitter4j.URLEntity;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -24,8 +22,6 @@ import edu.stanford.nlp.util.CoreMap;
 public class SentimentBolt extends BaseBasicBolt {
     private static final long serialVersionUID = 3201910429837431413L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(SentimentBolt.class);
-
     private static StanfordCoreNLP pipeline = new StanfordCoreNLP("nlp/nlp.properties");
 
     @Override
@@ -36,7 +32,7 @@ public class SentimentBolt extends BaseBasicBolt {
                 int mainSentiment = 0;
                 if ((status.getText() != null) && (status.getText().length() > 0)) {
                     int longest = 0;
-                    Annotation annotation = pipeline.process(status.getText());
+                    Annotation annotation = pipeline.process(cleanText(status));
                     for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
                         Tree tree = sentence.get(SentimentCoreAnnotations.AnnotatedTree.class);
                         int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
@@ -50,6 +46,20 @@ public class SentimentBolt extends BaseBasicBolt {
                 collector.emit(new Values(new Sentiment(status, mainSentiment)));
             }
         }
+    }
+
+    private String cleanText(Status status) {
+        String text = status.getText();
+
+        if (text.startsWith("RT")) {
+            text = text.substring(text.indexOf(":"), text.length());
+        }
+
+        for (URLEntity urlEntity : status.getURLEntities()) {
+            text = text.replace(urlEntity.getURL(), "");
+        }
+
+        return text;
     }
 
     @Override
