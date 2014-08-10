@@ -1,0 +1,56 @@
+<h1 class="page-header text-capitalize">{{movie.name}}</h1>
+<div class="row">
+  <div class="col-md-3">
+    <div class="thumbnail">
+      <img ng-src="{{movie.thumbnail}}" alt="...">
+    </div>
+  </div>
+  
+  <div class="col-md-5">
+    <p class="lead"><mark>Synopsis</mark></p>
+    <p>{{movie.description}}</p>
+    
+    <p class="movie-info lead"><mark>Info</mark></p>
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Release Date: </strong>{{movie.releaseDate}}</p>
+        <p><strong>Rating: </strong>{{movie.rating}}</p>
+        <p><strong>IMDB: </strong><a href="http://www.imdb.com/title/tt{{movie.imdb}}" class="text-capitalize">{{movie.name}}</a></p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Number of Tweets: </strong><span class="badge">{{movie.numberOfTweets}}</span></p>
+        <p><strong>Score: </strong><mark class="{{movie.score}}">{{movie.score}}<mark></p>
+      </div>
+    </div>
+    
+    <p class="movie-cast lead"><mark>Cast</mark></p>
+    <div ng-repeat="actor in movie.actors">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="movie-cast-thumbnail thumbnail">
+            <img src="{{actor.thumbnail}}" alt="..." class="movie-cast-image">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <p><mark>{{actor.name}}:<mark></p>
+          <p>{{actor.characters}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-4">
+    <ul class="media-list repeated-item" ng-repeat="tweet in tweets">
+      <li class="media list-group-item list-group-item-{{tweet.score}}">
+        <a class="pull-left" href="#">
+          <img class="media-object img-thumbnail" ng-src="{{tweet.thumbnail}}" alt="...">
+        </a>
+        <div class="media-body">
+          <span class="media-heading user-name">{{tweet.user}} <span class="twitter-handle">@{{tweet.handle}} - <span>{{tweet.date}}</span></span></span>
+          <br />
+          <div class="tweet">{{tweet.tweet}}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
