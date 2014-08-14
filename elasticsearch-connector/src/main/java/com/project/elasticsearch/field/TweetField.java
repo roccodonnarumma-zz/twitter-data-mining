@@ -2,13 +2,12 @@ package com.project.elasticsearch.field;
 
 public enum TweetField {
 
+    MOVIE_ID("movie_id"),
     MOVIE_NAME("movie_name"),
     SENTIMENT("sentiment"),
     TEXT("text"),
     CREATED_AT("created_at"),
-    GEO_LOCATION("geo_location"),
-    PLACE("place"),
-    TIMEZONE("timezone");
+    GEO_LOCATION("geo_location");
 
     private String name;
 

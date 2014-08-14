@@ -1,21 +1,20 @@
-package com.project.model;
+package com.project.model.sentiment;
 
 import java.io.Serializable;
 
-import twitter4j.Status;
+import com.project.model.twitter.CustomStatus;
 
 public class Sentiment implements Serializable {
-    private static final long serialVersionUID = 3370802195227900772L;
 
-    private Status status;
+    private CustomStatus status;
     private int sentiment;
 
-    public Sentiment(Status status, int sentiment) {
+    public Sentiment(CustomStatus status, int sentiment) {
         this.status = status;
         this.sentiment = sentiment;
     }
 
-    public Status getStatus() {
+    public CustomStatus getStatus() {
         return status;
     }
 

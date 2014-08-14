@@ -3,7 +3,6 @@ package com.project.bolt;
 import java.util.HashMap;
 import java.util.Map;
 
-import twitter4j.Status;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -12,7 +11,8 @@ import backtype.storm.tuple.Tuple;
 import com.project.elasticsearch.field.TweetField;
 import com.project.elasticsearch.index.ElasticsearchIndex;
 import com.project.elasticsearch.type.Type;
-import com.project.model.Sentiment;
+import com.project.model.sentiment.Sentiment;
+import com.project.model.twitter.CustomStatus;
 import com.project.service.track.TrackService;
 
 public class ElasticsearchBolt extends BaseBasicBolt {
@@ -29,15 +29,14 @@ public class ElasticsearchBolt extends BaseBasicBolt {
         for (Object obj : input.getValues()) {
             if (obj instanceof Sentiment) {
                 Sentiment sentiment = (Sentiment)obj;
-                Status status = sentiment.getStatus();
+                CustomStatus status = sentiment.getStatus();
                 Map<String, Object> map = new HashMap<>();
+                map.put(TweetField.MOVIE_ID.getName(), status.getMovieId());
                 map.put(TweetField.MOVIE_NAME.getName(), getMovieName(status.getText()));
                 map.put(TweetField.SENTIMENT.getName(), sentiment.getSentiment());
                 map.put(TweetField.TEXT.getName(), status.getText());
                 map.put(TweetField.CREATED_AT.getName(), status.getCreatedAt());
                 map.put(TweetField.GEO_LOCATION.getName(), status.getGeoLocation());
-                map.put(TweetField.PLACE.getName(), status.getPlace());
-                map.put(TweetField.TIMEZONE.getName(), status.getUser().getTimeZone());
                 index.index(Type.TWEET, map);
             }
         }

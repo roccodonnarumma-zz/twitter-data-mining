@@ -1,7 +1,5 @@
 package com.project.bolt;
 
-import twitter4j.Status;
-import twitter4j.URLEntity;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -9,7 +7,8 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-import com.project.model.Sentiment;
+import com.project.model.sentiment.Sentiment;
+import com.project.model.twitter.CustomStatus;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
@@ -27,8 +26,8 @@ public class SentimentBolt extends BaseBasicBolt {
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
         for (Object obj : input.getValues()) {
-            if (obj instanceof Status) {
-                Status status = (Status)obj;
+            if (obj instanceof CustomStatus) {
+                CustomStatus status = (CustomStatus)obj;
                 int mainSentiment = 0;
                 if ((status.getText() != null) && (status.getText().length() > 0)) {
                     int longest = 0;
@@ -48,15 +47,11 @@ public class SentimentBolt extends BaseBasicBolt {
         }
     }
 
-    private String cleanText(Status status) {
+    private String cleanText(CustomStatus status) {
         String text = status.getText();
 
         if (text.startsWith("RT")) {
             text = text.substring(text.indexOf(":"), text.length());
-        }
-
-        for (URLEntity urlEntity : status.getURLEntities()) {
-            text = text.replace(urlEntity.getURL(), "");
         }
 
         return text;

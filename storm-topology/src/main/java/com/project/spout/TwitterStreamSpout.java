@@ -24,6 +24,8 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
+import com.project.model.twitter.CustomStatus;
+
 public class TwitterStreamSpout extends BaseRichSpout {
     private static final long serialVersionUID = 5833104464703359992L;
 
@@ -99,7 +101,8 @@ public class TwitterStreamSpout extends BaseRichSpout {
         if (status == null) {
             Utils.sleep(50);
         } else {
-            collector.emit(new Values(status));
+            CustomStatus customStatus = new CustomStatus(status, "movieId");
+            collector.emit(new Values(customStatus));
         }
     }
 
