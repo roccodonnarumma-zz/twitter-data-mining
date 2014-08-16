@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="twitterApp">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+
+    <title>Twitter Movies App</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="styles/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="styles/dashboard.css" rel="stylesheet">
+    
+    <link href="styles/app.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="javascript/ie10-viewport-bug-workaround.js"></script>
+
+    <style type="text/css" id="holderjs-style"></style>
+  </head>
+
+  <body>
+  
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Twitter Movies App</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid" ng-controller="tabController">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li ng-class="{active: isActive('/')}"><a href="#">Now</a></li>
+            <li ng-class="{active: isActive('/top10')}"><a href="#top10">Top 10</a></li>
+            <li ng-class="{active: isActive('/movies')}"><a href="#movies">Movies</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <div id="content">
+            <div ng-view></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="javascript/jquery.js"></script>
+    <script src="javascript/bootstrap.js"></script>
+    
+    <script src="javascript/angular.min.js"></script>
+    <script src="javascript/angular-route.min.js"></script>
+    <script src="javascript/angular-animate.min.js"></script>
+    
+    <script src="javascript/app.js"></script>
+  </body>
+</html>

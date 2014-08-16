@@ -13,13 +13,11 @@ import com.project.elasticsearch.index.ElasticsearchIndex;
 import com.project.elasticsearch.type.Type;
 import com.project.model.sentiment.Sentiment;
 import com.project.model.twitter.CustomStatus;
-import com.project.service.track.TrackService;
 
 public class ElasticsearchBolt extends BaseBasicBolt {
     private static final long serialVersionUID = 3361080905463165886L;
 
     private ElasticsearchIndex index;
-    private String[] tracks;
 
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
@@ -32,7 +30,6 @@ public class ElasticsearchBolt extends BaseBasicBolt {
                 CustomStatus status = sentiment.getStatus();
                 Map<String, Object> map = new HashMap<>();
                 map.put(TweetField.MOVIE_ID.getName(), status.getMovieId());
-                map.put(TweetField.MOVIE_NAME.getName(), getMovieName(status.getText()));
                 map.put(TweetField.SENTIMENT.getName(), sentiment.getSentiment());
                 map.put(TweetField.TEXT.getName(), status.getText());
                 map.put(TweetField.CREATED_AT.getName(), status.getCreatedAt());
@@ -40,21 +37,6 @@ public class ElasticsearchBolt extends BaseBasicBolt {
                 index.index(Type.TWEET, map);
             }
         }
-    }
-
-    private String getMovieName(String text) {
-        if (tracks == null) {
-            tracks = TrackService.INSTANCE.getTracks();
-        }
-
-        String textLower = text.toLowerCase();
-        for (String track : tracks) {
-            if (textLower.contains(track.toLowerCase())) {
-                return track;
-            }
-        }
-
-        return null;
     }
 
     @Override

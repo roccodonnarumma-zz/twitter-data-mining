@@ -19,4 +19,4 @@ dependency-reduced-pom.xml
 
 
 storm-topology/src/main/resources/twitter/config.properties
-storm-topology/src/main/resources/movie/rotten-tomatoes.properties
+project-api/src/main/resources/movie/rotten-tomatoes.properties

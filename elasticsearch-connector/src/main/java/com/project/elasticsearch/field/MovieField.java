@@ -1,12 +1,13 @@
 package com.project.elasticsearch.field;
 
-public enum TrackField {
+public enum MovieField {
 
+    MOVIE_ID("movieId"),
     TRACKS("tracks");
 
     private String name;
 
-    private TrackField(String name) {
+    private MovieField(String name) {
         this.name = name;
     }
 

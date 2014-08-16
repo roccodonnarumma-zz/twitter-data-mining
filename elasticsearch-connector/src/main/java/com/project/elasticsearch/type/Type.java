@@ -3,7 +3,7 @@ package com.project.elasticsearch.type;
 public enum Type {
 
     TWEET("tweet"),
-    TRACK("track");
+    MOVIE("movie");
 
     private String name;
 

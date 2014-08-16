@@ -3,15 +3,12 @@ package com.project.service.movie;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 
 import org.json.JSONObject;
 
-import com.project.topology.TwitterSentimentTopology;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-
-public class RottenTomatoesMovieService {
+public class Test {
 
     public static final String BASE_URL = "http://api.rottentomatoes.com/api/public/v1.0";
     public static final String IN_THEATERS_PATH = "/lists/movies/in_theaters.json";
@@ -22,9 +19,9 @@ public class RottenTomatoesMovieService {
 
     private Client client;
 
-    public RottenTomatoesMovieService() throws IOException {
+    public Test() throws IOException {
         Properties properties = new Properties();
-        properties.load(TwitterSentimentTopology.class.getClassLoader().getResourceAsStream("movie/rotten-tomatoes.properties"));
+        properties.load(RottenTomatoesMovieService.class.getClassLoader().getResourceAsStream("movie/rotten-tomatoes.properties"));
 
         client = Client.create();
         apiKey = properties.getProperty("rotten.tomatoes.apiKey");
@@ -40,5 +37,4 @@ public class RottenTomatoesMovieService {
         JSONObject json = new JSONObject(string);
         System.out.println(json);
     }
-
 }

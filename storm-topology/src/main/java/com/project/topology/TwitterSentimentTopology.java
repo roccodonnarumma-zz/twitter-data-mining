@@ -24,7 +24,6 @@ import backtype.storm.topology.TopologyBuilder;
 
 import com.project.bolt.ElasticsearchBolt;
 import com.project.bolt.SentimentBolt;
-import com.project.service.track.TrackService;
 import com.project.spout.TwitterStreamSpout;
 
 public class TwitterSentimentTopology {
@@ -34,17 +33,12 @@ public class TwitterSentimentTopology {
         Properties properties = new Properties();
         properties.load(TwitterSentimentTopology.class.getClassLoader().getResourceAsStream("twitter/config.properties"));
 
-        String[] tracks = TrackService.INSTANCE.getTracks();
-
-        LOG.debug("Using tracks: {}", tracks);
-
         TopologyBuilder builder = new TopologyBuilder();
 
         builder.setSpout("twitter", new TwitterStreamSpout(properties.getProperty("twitter.consumerKey"),
                 properties.getProperty("twitter.consumerSecret"),
                 properties.getProperty("twitter.token"),
-                properties.getProperty("twitter.tokenSecret"),
-                tracks));
+                properties.getProperty("twitter.tokenSecret")));
 
         RecordFormat format = new DelimitedRecordFormat().withFieldDelimiter(properties.getProperty("hdfs.field.delimiter"));
         SyncPolicy syncPolicy = new CountSyncPolicy(10);

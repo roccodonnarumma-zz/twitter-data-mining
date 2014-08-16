@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import twitter4j.FilterQuery;
+import twitter4j.HashtagEntity;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -25,6 +26,7 @@ import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
 import com.project.model.twitter.CustomStatus;
+import com.project.service.track.MovieService;
 
 public class TwitterStreamSpout extends BaseRichSpout {
     private static final long serialVersionUID = 5833104464703359992L;
@@ -38,14 +40,14 @@ public class TwitterStreamSpout extends BaseRichSpout {
     private final String consumerSecret;
     private final String token;
     private final String tokenSecret;
-    private final String[] tracks;
 
-    public TwitterStreamSpout(String consumerKey, String consumerSecret, String token, String tokenSecret, String[] tracks) {
+    private Map<String, String> hashtagMovies;
+
+    public TwitterStreamSpout(String consumerKey, String consumerSecret, String token, String tokenSecret) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.token = token;
         this.tokenSecret = tokenSecret;
-        this.tracks = tracks;
     }
 
     @Override
@@ -91,8 +93,25 @@ public class TwitterStreamSpout extends BaseRichSpout {
         twitterStream.setOAuthConsumer(consumerKey, consumerSecret);
         twitterStream.setOAuthAccessToken(new AccessToken(token, tokenSecret));
 
-        FilterQuery query = new FilterQuery().track(tracks);
-        twitterStream.filter(query);
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (true) {
+                    hashtagMovies = MovieService.getHashtagMovies();
+                    String[] tracks = hashtagMovies.keySet().toArray(new String[0]);
+
+                    LOG.info("Using tracks: {}", tracks);
+
+                    close();
+
+                    FilterQuery query = new FilterQuery().track(tracks);
+                    twitterStream.filter(query);
+                    Utils.sleep(60000 * 10);
+                }
+            }
+        });
+        thread.start();
     }
 
     @Override
@@ -101,8 +120,14 @@ public class TwitterStreamSpout extends BaseRichSpout {
         if (status == null) {
             Utils.sleep(50);
         } else {
-            CustomStatus customStatus = new CustomStatus(status, "movieId");
-            collector.emit(new Values(customStatus));
+            for (HashtagEntity hashtagEntity : status.getHashtagEntities()) {
+                String movieId = hashtagMovies.get(hashtagEntity.getText());
+                if (movieId != null) {
+                    CustomStatus customStatus = new CustomStatus(status, movieId);
+                    collector.emit(new Values(customStatus));
+                    break;
+                }
+            }
         }
     }
 
