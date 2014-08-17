@@ -18,11 +18,9 @@ import com.project.elasticsearch.type.Type;
 
 public class ElasticsearchIndex {
 
-    public static ElasticsearchIndex INSTANCE = new ElasticsearchIndex();
-
     private Client client;
 
-    private ElasticsearchIndex() {
+    public ElasticsearchIndex() {
         try {
             Properties properties = new Properties();
             properties.load(ElasticsearchIndex.class.getClassLoader().getResourceAsStream("elasticsearch/elasticsearch.properties"));
@@ -34,43 +32,35 @@ public class ElasticsearchIndex {
         }
     }
 
-    public void index(Type type, Map<String, Object> map) {
-        client.prepareIndex("twitter", type.getName()).setSource(map).execute();
+    public void index(Type type, String id, Map<String, Object> map) {
+        client.prepareIndex("twitter", type.getName(), id).setSource(map).execute();
+    }
+
+    public void index(Type type, String id, String json) {
+        client.prepareIndex("twitter", type.getName(), id).setSource(json).execute();
     }
 
     public JSONObject get(Type type, String id) {
         GetResponse response = client.prepareGet("twitter", type.getName(), id).execute().actionGet();
-        return new JSONObject(response.getSourceAsString());
+        String source = response.getSourceAsString();
+        if (source == null) {
+            return new JSONObject();
+        }
+        return new JSONObject(source);
     }
 
     public JSONArray getAll(Type type) {
         JSONArray array = new JSONArray();
-        SearchResponse response = client.prepareSearch("twitter").setTypes(type.getName()).execute().actionGet();
+        SearchResponse response = client.prepareSearch("twitter").setTypes(type.getName()).setSize(1000).execute().actionGet();
         Iterator<SearchHit> iterator = response.getHits().iterator();
         while (iterator.hasNext()) {
-            array.put(new JSONObject(iterator.next().getSourceAsString()));
+            String source = iterator.next().getSourceAsString();
+            if (source != null) {
+                array.put(new JSONObject(source));
+            }
         }
         return array;
     }
-
-    //    public static void main(String[] args) {
-    //        Client client;
-    //        try {
-    //            Properties properties = new Properties();
-    //            properties.load(ElasticsearchIndex.class.getClassLoader().getResourceAsStream("elasticsearch/elasticsearch.properties"));
-    //            client = new TransportClient().addTransportAddress(
-    //                    new InetSocketTransportAddress(properties.getProperty("elasticsearch.hostname"),
-    //                            Integer.parseInt(properties.getProperty("elasticsearch.port"))));
-    //        } catch (IOException e) {
-    //            throw new RuntimeException(e);
-    //        }
-    //
-    //        SearchResponse response = client.prepareSearch("twitter").setTypes("movie").execute().actionGet();
-    //        Iterator<SearchHit> iterator = response.getHits().iterator();
-    //        while (iterator.hasNext()) {
-    //            System.out.println(new JSONObject(iterator.next().getSourceAsString()));
-    //        }
-    //    }
 
     @Override
     public void finalize() {

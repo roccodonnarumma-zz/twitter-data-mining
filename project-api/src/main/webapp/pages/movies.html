@@ -1,12 +1,11 @@
 <h1 class="page-header">Movies</h1>
-<div class="row" ng-repeat="movie in movies">
-  <div class="col-xs-2 col-sm-1 col-md-2">
-    <div class="thumbnail">
-      <a href="#/movie/123" class="caption">
+<div class="row">
+  <div class="col-md-2" ng-repeat="movie in movies | orderBy:'name'">
+    <div class="thumbnail thumbnail-movies">
+      <a href="#/movie/{{movie.id}}" class="caption">
         <h4>{{movie.name}}</h4>
-        <p class="label label-{{movie.score}}">{{movie.score}}</p>
       </a>
-      <a href="#/movie/123">
+      <a href="#/movie/{{movie.id}}">
         <img ng-src="{{movie.thumbnail}}" alt="...">
       </a>
     </div>

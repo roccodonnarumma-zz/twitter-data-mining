@@ -2,7 +2,13 @@ package com.project.elasticsearch.field;
 
 public enum MovieField {
 
-    MOVIE_ID("movieId"),
+    ID("id"),
+    TITLE("title"),
+    MPAA_RATING("mpaa_rating"),
+    SYNOPSIS("synopsis"),
+    RELEASE_DATES("release_dates"),
+    POSTERS("posters"),
+    ALTERNATE_IDS("alternate_ids"),
     TRACKS("tracks");
 
     private String name;

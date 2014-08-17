@@ -18,23 +18,11 @@
         <p><strong>IMDB: </strong><a href="http://www.imdb.com/title/tt{{movie.imdb}}" class="text-capitalize">{{movie.name}}</a></p>
       </div>
       <div class="col-md-6">
+        <!--
+        <p><strong>Number of Tweets: </strong><span class="badge">{{movie.numberOfTweets}}</span></p>
+        -->
         <p><strong>Number of Tweets: </strong><span class="badge">{{movie.numberOfTweets}}</span></p>
         <p><strong>Score: </strong><mark class="{{movie.score}}">{{movie.score}}<mark></p>
-      </div>
-    </div>
-    
-    <p class="movie-cast lead"><mark>Cast</mark></p>
-    <div ng-repeat="actor in movie.actors">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="movie-cast-thumbnail thumbnail">
-            <img src="{{actor.thumbnail}}" alt="..." class="movie-cast-image">
-          </div>
-        </div>
-        <div class="col-md-6">
-          <p><mark>{{actor.name}}:<mark></p>
-          <p>{{actor.characters}}</p>
-        </div>
       </div>
     </div>
   </div>

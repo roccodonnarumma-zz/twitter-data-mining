@@ -1,4 +1,12 @@
-var app = angular.module("twitterApp", ['ngRoute', 'ngAnimate']);
+var app = angular.module("twitterApp", ['ngRoute', 'ngAnimate', 'ngResource']);
+
+app.factory('movies', function($resource) {
+    return $resource('http://localhost:8080/project-api/movies');
+});
+
+app.factory('movie', function($resource) {
+    return $resource('http://localhost:8080/project-api/movie/:id');
+});
 
 app.factory('twitterService', function ($http, $q) {
   return {
@@ -19,44 +27,7 @@ app.factory('twitterService', function ($http, $q) {
 });
 
 app.factory('movieService', function() {
-  return {    
-    getMovies: function() {
-      var movies = [];
-      movies.push(
-        {
-          id: '',
-          name: 'Guardians of the Galaxy',
-          thumbnail: 'http://content8.flixster.com/movie/11/17/80/11178082_ori.jpg',
-          score: 'positive'
-        }
-      );
-      return movies;
-    },
-    getMovie: function(movieId) {
-      return {
-        id: movieId,
-        name: 'Guardians of the Galaxy',
-        description: 'From Marvel, the studio that brought you the global blockbuster franchises of Iron Man, Thor, Captain America and The Avengers, comes a new team-the Guardians of the Galaxy. An action-packed, epic space adventure, Marvel\'s \"Guardians of the Galaxy\" expands the Marvel Cinematic Universe into the cosmos, where brash adventurer Peter Quill finds himself the object of an unrelenting bounty hunt after stealing a mysterious orb coveted by Ronan, a powerful villain with ambitions that threaten the entire universe. To evade the ever-persistent Ronan, Quill is forced into an uneasy truce with a quartet of disparate misfits-Rocket, a gun-toting raccoon, Groot, a tree-like humanoid, the deadly and enigmatic Gamora and the revenge-driven Drax the Destroyer. But when Quill discovers the true power of the orb and the menace it poses to the cosmos, he must do his best to rally his ragtag rivals for a last, desperate stand-with the galaxy\'s fate in the balance. (C) Walt Disney',
-        thumbnail: 'http://content8.flixster.com/movie/11/17/80/11178082_ori.jpg',
-        releaseDate: '2014-08-01',
-        rating: 'PG-13',
-        imdb: '2015381',
-        actors: [
-          {
-            name: 'Chris Pratt',
-            characters: 'Peter Quill/Star-Lord',
-            thumbnail: 'http://content6.flixster.com/rtactor/39/90/39904_pro.jpg'
-          },
-          {
-            name: 'Lee Pace',
-            characters: 'Ronan the Accuser',
-            thumbnail: 'http://content8.flixster.com/photo/12/48/64/12486490_ori.jpg'
-          }
-        ],
-        numberOfTweets: 11,
-        score: 'positive'
-      }
-    },
+  return {
     getTop10Movies: function() {
        var movies = [];
        
@@ -107,6 +78,10 @@ app.config(function($routeProvider) {
         templateUrl: 'pages/movie.html',
         controller: 'movieController'
     })
+    .when('/admin', {
+        templateUrl: 'pages/admin.html',
+        controller: 'adminController'
+    })
     .otherwise({
         redirectTo: '/'
     });
@@ -142,12 +117,16 @@ app.controller('top10Controller', function($scope, movieService) {
   $scope.movies = movieService.getTop10Movies();
 });
 
-app.controller('moviesController', function($scope, movieService) {
-  $scope.movies = movieService.getMovies();
+app.controller('moviesController', function($scope, movies) {
+  movies.query(function(data) {
+    $scope.movies = data;
+  });
 });
 
-app.controller('movieController', function($scope, $routeParams, $timeout, twitterService, movieService) {
-  $scope.movie = movieService.getMovie($routeParams.id); 
+app.controller('movieController', function($scope, $routeParams, $timeout, twitterService, movie) {
+  movie.get( { id : $routeParams.id }, function(data) {
+    $scope.movie = data; 
+  });
   
   $scope.tweets = [];
   
@@ -167,6 +146,17 @@ app.controller('movieController', function($scope, $routeParams, $timeout, twitt
   };
   
   $scope.loadTweets();
+});
+
+app.controller('adminController', function($scope, movies, movie) {
+  movies.query(function(data) {
+    $scope.movies = data;
+  });
+  
+  $scope.save = function(movieObject, hashtag) {
+    movie.save({ id : movieObject.id }, hashtag);
+    movieObject.tracks = hashtag;
+  };
 });
 
 app.animation('.repeated-item', function() {

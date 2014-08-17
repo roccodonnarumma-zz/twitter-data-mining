@@ -14,16 +14,34 @@
 	</parent>
 	
 	<properties>
-		<jersey.client.version>2.11</jersey.client.version>
+		<spring.version>4.0.6.RELEASE</spring.version>
 	</properties>
 	
 	<dependencies>
 		<dependency>
-		    <groupId>org.glassfish.jersey.core</groupId>
-		    <artifactId>jersey-client</artifactId>
-		    <version>${jersey.client.version}</version>
+			<groupId>com.project</groupId>
+			<artifactId>core</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
-			
+		
+		<dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-context</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    
+	    <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
