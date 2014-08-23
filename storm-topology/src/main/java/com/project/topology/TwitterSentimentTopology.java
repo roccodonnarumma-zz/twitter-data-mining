@@ -52,8 +52,8 @@ public class TwitterSentimentTopology {
                 .withRotationPolicy(rotationPolicy)
                 .withSyncPolicy(syncPolicy);
 
-        builder.setBolt("hdfs", bolt).shuffleGrouping("twitter");
         builder.setBolt("sentiment", new SentimentBolt()).shuffleGrouping("twitter");
+        builder.setBolt("hdfs", bolt).shuffleGrouping("sentiment");
         builder.setBolt("index", new ElasticsearchBolt()).shuffleGrouping("sentiment");
 
         Config conf = new Config();

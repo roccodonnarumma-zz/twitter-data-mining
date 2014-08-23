@@ -1,8 +1,14 @@
 package com.project.services.tweets;
 
-import com.project.model.sentiment.Sentiment;
+import java.io.IOException;
+
+import com.project.model.twitter.CustomStatus;
 
 public interface TweetService {
 
-    void saveTweet(Sentiment sentiment);
+    void saveTweet(CustomStatus status) throws IOException;
+
+    CustomStatus getLatestTweet() throws IOException;
+
+    CustomStatus getLatestTweet(String movieId) throws IOException;
 }

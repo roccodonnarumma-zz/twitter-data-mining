@@ -1,11 +1,19 @@
 var app = angular.module("twitterApp", ['ngRoute', 'ngAnimate', 'ngResource']);
 
 app.factory('movies', function($resource) {
-    return $resource('http://localhost:8080/project-api/movies');
+  return $resource('http://localhost:8080/project-api/movies');
 });
 
 app.factory('movie', function($resource) {
-    return $resource('http://localhost:8080/project-api/movie/:id');
+  return $resource('http://localhost:8080/project-api/movie/:id');
+});
+
+app.factory('latestTweet', function($resource) {
+  return $resource('http://localhost:8080/project-api/tweet/latest'); 
+});
+
+app.factory('latestMovieTweet', function($resource) {
+  return $resource('http://localhost:8080/project-api/tweet/latest/:id');
 });
 
 app.factory('twitterService', function ($http, $q) {
@@ -93,18 +101,20 @@ app.controller('tabController', function($scope, $location) {
   };
 });
 
-app.controller('nowController', function($scope, $timeout, twitterService) {
+app.controller('nowController', function($scope, $timeout, latestTweet) {
   $scope.tweets = [];
     
   $scope.loadTweets = function () {
     $timeout(function() {
-      twitterService.getData().then(function(data) {
+      latestTweet.get(function(data) {
         var newTweets = $scope.tweets;
-        newTweets.unshift(data);
-        if(newTweets.length > 10) {
-          newTweets.pop();
+        if(newTweets[0] == undefined || newTweets[0].id != data.id) {
+          newTweets.unshift(data);
+          if(newTweets.length > 10) {
+            newTweets.pop();
+          }
+          $scope.tweets = newTweets;
         }
-        $scope.tweets = newTweets;
       });
       $scope.loadTweets();
     }, 2000);
@@ -123,7 +133,7 @@ app.controller('moviesController', function($scope, movies) {
   });
 });
 
-app.controller('movieController', function($scope, $routeParams, $timeout, twitterService, movie) {
+app.controller('movieController', function($scope, $routeParams, $timeout, latestMovieTweet, movie) {
   movie.get( { id : $routeParams.id }, function(data) {
     $scope.movie = data; 
   });
@@ -132,14 +142,16 @@ app.controller('movieController', function($scope, $routeParams, $timeout, twitt
   
   $scope.loadTweets = function () {
     $timeout(function() {
-      twitterService.getData().then(function(data) {
+      latestMovieTweet.get( { id : $routeParams.id }, function(data) {
         var newTweets = $scope.tweets;
-        newTweets.unshift(data);
-        if(newTweets.length > 10) {
-          newTweets.pop();
-        }
-        $scope.tweets = newTweets;
-        $scope.movie.numberOfTweets = $scope.movie.numberOfTweets + 1;
+        if(newTweets[0] == undefined || newTweets[0].id != data.id) {
+          newTweets.unshift(data);
+          if(newTweets.length > 10) {
+            newTweets.pop();
+          }
+          $scope.tweets = newTweets;
+          $scope.movie.numberOfTweets = $scope.movie.numberOfTweets + 1;
+        } 
       });
       $scope.loadTweets();
     }, 2000);

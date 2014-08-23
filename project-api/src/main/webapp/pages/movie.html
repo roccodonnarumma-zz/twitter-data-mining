@@ -13,7 +13,7 @@
     <p class="movie-info lead"><mark>Info</mark></p>
     <div class="row">
       <div class="col-md-6">
-        <p><strong>Release Date: </strong>{{movie.releaseDate}}</p>
+        <p><strong>Release Date: </strong>{{movie.releaseDate | date : 'dd-MMM-yyyy'}}</p>
         <p><strong>Rating: </strong>{{movie.rating}}</p>
         <p><strong>IMDB: </strong><a href="http://www.imdb.com/title/tt{{movie.imdb}}" class="text-capitalize">{{movie.name}}</a></p>
       </div>
@@ -34,9 +34,9 @@
           <img class="media-object img-thumbnail" ng-src="{{tweet.thumbnail}}" alt="...">
         </a>
         <div class="media-body">
-          <span class="media-heading user-name">{{tweet.user}} <span class="twitter-handle">@{{tweet.handle}} - <span>{{tweet.date}}</span></span></span>
+          <span class="media-heading user-name">{{tweet.user}} <span class="twitter-handle">@{{tweet.handle}} - <span>{{tweet.date | date : 'dd-MMM-yyyy'}}</span></span></span>
           <br />
-          <div class="tweet">{{tweet.tweet}}</div>
+          <div class="small-tweet">{{tweet.tweet}}</div>
         </div>
       </li>
     </ul>

@@ -2,15 +2,30 @@ package com.project.model.twitter;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomUser implements Serializable {
 
     private long id;
     private String name;
+
+    @JsonProperty("screen_name")
     private String screenName;
     private String location;
+
+    @JsonProperty("profile_image_url")
     private String profileImageUrl;
+
+    @JsonProperty("profile_image_url_https")
     private String profileImageUrlHttps;
+
+    @JsonProperty("followers_count")
     private int followersCount;
+
+    public CustomUser() {
+    }
 
     public CustomUser(long id, String name, String screenName, String location, String profileImageUrl, String profileImageUrlHttps, int followersCount) {
         this.id = id;
@@ -55,11 +70,11 @@ public class CustomUser implements Serializable {
         return "{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", screenName='" + screenName + '\'' +
+                ", scree_name='" + screenName + '\'' +
                 ", location='" + location + '\'' +
-                ", profileImageUrl='" + profileImageUrl + '\'' +
-                ", profileImageUrlHttps='" + profileImageUrlHttps + '\'' +
-                ", followersCount=" + followersCount +
+                ", profile_image_url='" + profileImageUrl + '\'' +
+                ", profile_image_url_https='" + profileImageUrlHttps + '\'' +
+                ", followers_count=" + followersCount +
                 '}';
     }
 }

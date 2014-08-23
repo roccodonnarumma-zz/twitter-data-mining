@@ -1,5 +1,8 @@
 package com.project.bolt;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -7,7 +10,6 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-import com.project.model.sentiment.Sentiment;
 import com.project.model.twitter.CustomStatus;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -22,6 +24,16 @@ public class SentimentBolt extends BaseBasicBolt {
     private static final long serialVersionUID = 3201910429837431413L;
 
     private static StanfordCoreNLP pipeline = new StanfordCoreNLP("nlp/nlp.properties");
+
+    private static Map<Integer, Integer> sentimentMap = new HashMap<>();
+
+    static {
+        sentimentMap.put(1, -2);
+        sentimentMap.put(2, -1);
+        sentimentMap.put(3, 0);
+        sentimentMap.put(4, 1);
+        sentimentMap.put(5, 2);
+    }
 
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
@@ -42,7 +54,8 @@ public class SentimentBolt extends BaseBasicBolt {
                         }
                     }
                 }
-                collector.emit(new Values(new Sentiment(status, mainSentiment)));
+                status.setSentiment(sentimentMap.get(mainSentiment));
+                collector.emit(new Values(status));
             }
         }
     }
@@ -53,6 +66,9 @@ public class SentimentBolt extends BaseBasicBolt {
         if (text.startsWith("RT")) {
             text = text.substring(text.indexOf(":"), text.length());
         }
+
+        text = text.replaceAll("#", "");
+        text = text.replaceAll("@", "");
 
         return text;
     }

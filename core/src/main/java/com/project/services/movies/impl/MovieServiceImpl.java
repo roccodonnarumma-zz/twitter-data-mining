@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,12 +21,23 @@ import com.project.services.movies.MovieService;
 @Service
 public class MovieServiceImpl implements MovieService {
 
+    private static MovieServiceImpl INSTANCE;
+
+    @Autowired
     private ElasticsearchIndex elasticsearchIndex;
+
     private ObjectMapper mapper;
 
-    public MovieServiceImpl() {
-        elasticsearchIndex = new ElasticsearchIndex();
+    private MovieServiceImpl() {
         mapper = new ObjectMapper();
+    }
+
+    public static MovieServiceImpl getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new MovieServiceImpl();
+            INSTANCE.setElasticsearchIndex(new ElasticsearchIndex());
+        }
+        return INSTANCE;
     }
 
     @Override
@@ -36,9 +48,11 @@ public class MovieServiceImpl implements MovieService {
 
         for (int i = 0; i < array.length(); i++) {
             JSONObject movieObject = array.getJSONObject(i);
-            String tracks = movieObject.getString(MovieField.TRACKS.getName());
-            for (String track : tracks.split(",")) {
-                hashtagMovies.put(track, movieObject.getString(MovieField.ID.getName()));
+            if (!movieObject.isNull(MovieField.TRACKS.getName())) {
+                String tracks = movieObject.getString(MovieField.TRACKS.getName());
+                for (String track : tracks.split(",")) {
+                    hashtagMovies.put(track, movieObject.getString(MovieField.ID.getName()));
+                }
             }
         }
 
@@ -62,5 +76,9 @@ public class MovieServiceImpl implements MovieService {
     public void saveMovie(Movie movie) throws IOException {
         String json = mapper.writeValueAsString(movie);
         elasticsearchIndex.index(Type.MOVIE, movie.getId(), json);
+    }
+
+    public void setElasticsearchIndex(ElasticsearchIndex elasticsearchIndex) {
+        this.elasticsearchIndex = elasticsearchIndex;
     }
 }

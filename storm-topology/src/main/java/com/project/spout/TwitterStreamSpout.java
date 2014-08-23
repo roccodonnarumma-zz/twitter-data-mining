@@ -26,7 +26,6 @@ import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
 import com.project.model.twitter.CustomStatus;
-import com.project.services.movies.MovieService;
 import com.project.services.movies.impl.MovieServiceImpl;
 
 public class TwitterStreamSpout extends BaseRichSpout {
@@ -44,14 +43,11 @@ public class TwitterStreamSpout extends BaseRichSpout {
 
     private Map<String, String> hashtagMovies;
 
-    private MovieService movieService;
-
     public TwitterStreamSpout(String consumerKey, String consumerSecret, String token, String tokenSecret) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
         this.token = token;
         this.tokenSecret = tokenSecret;
-        movieService = new MovieServiceImpl();
     }
 
     @Override
@@ -102,6 +98,7 @@ public class TwitterStreamSpout extends BaseRichSpout {
             @Override
             public void run() {
                 while (true) {
+                    MovieServiceImpl movieService = MovieServiceImpl.getInstance();
                     hashtagMovies = movieService.getHashtagMovies();
                     String[] tracks = hashtagMovies.keySet().toArray(new String[0]);
 

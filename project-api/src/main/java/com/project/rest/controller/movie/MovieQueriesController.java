@@ -1,4 +1,4 @@
-package com.project.rest.controller;
+package com.project.rest.controller.movie;
 
 import java.io.IOException;
 import java.util.List;

@@ -12,6 +12,13 @@
   top: 40%;
 }
 
+.small-tweet {
+  height: 100%;
+  position: absolute;
+  top: 40%;
+  font-size: 12px;
+}
+
 .repeated-item.ng-enter, .repeated-item.ng-move {
   -webkit-transition:0.5s linear all;
   -moz-transition:0.5s linear all;

@@ -1,18 +1,36 @@
 package com.project.model.twitter;
 
-import twitter4j.GeoLocation;
+import java.io.Serializable;
 
-public class CustomGeoLocation extends GeoLocation {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CustomGeoLocation implements Serializable {
+
+    private double latitude;
+    private double longitude;
+
+    public CustomGeoLocation() {
+    }
 
     public CustomGeoLocation(double latitude, double longitude) {
-        super(latitude, longitude);
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     @Override
     public String toString() {
         return "{" +
-                "latitude=" + super.getLatitude() +
-                ", longitude=" + super.getLongitude() +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
     }
 
