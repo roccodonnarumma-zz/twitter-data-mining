@@ -10,9 +10,11 @@ public interface MovieService {
 
     Map<String, String> getHashtagMovies();
 
+    Movie getMovie(String id) throws IOException;
+
     List<Movie> getMovies() throws IOException;
 
-    Movie getMovie(String id) throws IOException;
+    List<Movie> getTop10Movies() throws IOException;
 
     void saveMovie(Movie movie) throws IOException;
 }

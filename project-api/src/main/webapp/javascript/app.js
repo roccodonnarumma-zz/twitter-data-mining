@@ -8,64 +8,16 @@ app.factory('movie', function($resource) {
   return $resource('http://localhost:8080/project-api/movie/:id');
 });
 
+app.factory('top10movies', function($resource) {
+  return $resource('http://localhost:8080/project-api/movie/top10');
+});
+
 app.factory('latestTweet', function($resource) {
   return $resource('http://localhost:8080/project-api/tweet/latest'); 
 });
 
 app.factory('latestMovieTweet', function($resource) {
   return $resource('http://localhost:8080/project-api/tweet/latest/:id');
-});
-
-app.factory('twitterService', function ($http, $q) {
-  return {
-    getData: function() {
-      var tweet = {
-          user: 'Rocco Project',
-          thumbnail: 'https://pbs.twimg.com/profile_images/487975419845439491/FsDTfs0M_bigger.jpeg',
-          handle: 'roccoproject',
-          date: 'Aug 9',
-          tweet: 'Nice movie',
-          score: 'positive'
-      };
-      var defer = $q.defer();
-      defer.resolve(tweet);
-      return defer.promise;
-    }
-  };
-});
-
-app.factory('movieService', function() {
-  return {
-    getTop10Movies: function() {
-       var movies = [];
-       
-       movies.push(
-         {
-           id: '123',
-           name: 'Guardians of the Gallaxy',
-           thumbnail: 'http://content8.flixster.com/movie/11/17/80/11178082_ori.jpg',
-           totalTweets: 11,
-           totalPositiveTweets: 9,
-           totalNeutralTweets: 1,
-           totalNegativeTweets: 1
-         }
-       );
-       
-       movies.push(
-         {
-           id: '123',
-           name: 'Guardians of the Gallaxy',
-           thumbnail: 'http://content8.flixster.com/movie/11/17/80/11178082_ori.jpg',
-           totalTweets: 11,
-           totalPositiveTweets: 9,
-           totalNeutralTweets: 1,
-           totalNegativeTweets: 1
-         }
-       );
-       
-       return movies;
-    }
-  }
 });
 
 app.config(function($routeProvider) {
@@ -123,8 +75,18 @@ app.controller('nowController', function($scope, $timeout, latestTweet) {
   $scope.loadTweets();
 });
 
-app.controller('top10Controller', function($scope, movieService) {
-  $scope.movies = movieService.getTop10Movies();
+app.controller('top10Controller', function($scope, top10movies) {
+  top10movies.query(function(data) {
+    $scope.movies = data;
+  });
+  
+  $scope.getPosition = function(movie) {
+    for(i = 0; i < $scope.movies.length; i++) {
+      if(movie.id == $scope.movies[i].id) {
+        return i + 1;
+      }
+    }
+  };
 });
 
 app.controller('moviesController', function($scope, movies) {
@@ -140,11 +102,17 @@ app.controller('movieController', function($scope, $routeParams, $timeout, lates
   
   $scope.tweets = [];
   
+  latestMovieTweet.get( { id : $routeParams.id }, function(data) {
+      if(data != undefined && data.id != undefined) {
+        $scope.tweets.push(data);
+      }
+  });
+  
   $scope.loadTweets = function () {
     $timeout(function() {
       latestMovieTweet.get( { id : $routeParams.id }, function(data) {
         var newTweets = $scope.tweets;
-        if(newTweets[0] == undefined || newTweets[0].id != data.id) {
+        if(data.id != undefined && newTweets[0].id != data.id) {
           newTweets.unshift(data);
           if(newTweets.length > 10) {
             newTweets.pop();

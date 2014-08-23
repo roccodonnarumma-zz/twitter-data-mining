@@ -5,7 +5,7 @@
       <img class="media-object img-thumbnail" ng-src="{{tweet.thumbnail}}" alt="...">
     </a>
     <div class="media-body">
-      <span class="media-heading user-name">{{tweet.user}} <span class="twitter-handle">@{{tweet.handle}} - <span>{{tweet.date}}</span></span></span>
+      <span class="media-heading user-name">{{tweet.user}} <span class="twitter-handle">@{{tweet.handle}} - <span>{{tweet.date | date : 'dd-MMM-yyyy'}}</span></span></span>
       <br />
       <div class="tweet">{{tweet.tweet}}</div>
     </div>

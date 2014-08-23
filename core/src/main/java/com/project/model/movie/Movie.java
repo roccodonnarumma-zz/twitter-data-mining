@@ -25,6 +25,12 @@ public class Movie {
 
     private String tracks;
 
+    @JsonProperty("total_tweets")
+    private long totalTweets;
+
+    @JsonProperty("total_sentiment")
+    private int totalSentiment;
+
     public String getId() {
         return id;
     }
@@ -87,6 +93,22 @@ public class Movie {
 
     public void setTracks(String tracks) {
         this.tracks = tracks;
+    }
+
+    public long getTotalTweets() {
+        return totalTweets;
+    }
+
+    public void setTotalTweets(long totalTweets) {
+        this.totalTweets = totalTweets;
+    }
+
+    public int getTotalSentiment() {
+        return totalSentiment;
+    }
+
+    public void setTotalSentiment(int totalSentiment) {
+        this.totalSentiment = totalSentiment;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

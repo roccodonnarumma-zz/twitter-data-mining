@@ -10,6 +10,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.twitter.CustomStatus;
 import com.project.services.tweets.impl.TweetServiceImpl;
 
@@ -18,16 +19,19 @@ public class ElasticsearchBolt extends BaseBasicBolt {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBolt.class);
 
+    private static ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public void execute(Tuple input, BasicOutputCollector collector) {
         TweetServiceImpl tweetService = TweetServiceImpl.getInstance();
         for (Object obj : input.getValues()) {
-            if (obj instanceof CustomStatus) {
-                CustomStatus status = (CustomStatus)obj;
+            if (obj instanceof String) {
+                String statusString = (String)obj;
                 try {
+                    CustomStatus status = mapper.readValue(statusString, CustomStatus.class);
                     tweetService.saveTweet(status);
                 } catch (IOException e) {
-                    LOG.error(String.format("Error saving the status %s", status.getId()), e);
+                    LOG.error(String.format("Error saving the status %s", statusString), e);
                 }
             }
         }
@@ -35,7 +39,6 @@ public class ElasticsearchBolt extends BaseBasicBolt {
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        // TODO Auto-generated method stub
     }
 
 }

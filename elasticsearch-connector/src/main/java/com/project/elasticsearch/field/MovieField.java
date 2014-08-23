@@ -9,7 +9,9 @@ public enum MovieField {
     RELEASE_DATES("release_dates"),
     POSTERS("posters"),
     ALTERNATE_IDS("alternate_ids"),
-    TRACKS("tracks");
+    TRACKS("tracks"),
+    TOTAL_TWEETS("total_tweets"),
+    TOTAL_SENTIMENT("total_sentiment");
 
     private String name;
 

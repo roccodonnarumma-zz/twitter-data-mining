@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +47,7 @@ public class MovieServiceImpl implements MovieService {
     public Map<String, String> getHashtagMovies() {
         Map<String, String> hashtagMovies = new HashMap<>();
 
-        JSONArray array = elasticsearchIndex.getAll(Type.MOVIE);
+        JSONArray array = elasticsearchIndex.search(Type.MOVIE, 1000, null, null, null);
 
         for (int i = 0; i < array.length(); i++) {
             JSONObject movieObject = array.getJSONObject(i);
@@ -60,16 +63,24 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public Movie getMovie(String id) throws IOException {
+        JSONObject movieObject = elasticsearchIndex.get(Type.MOVIE, id);
+        return mapper.readValue(movieObject.toString(), Movie.class);
+    }
+
+    @Override
     public List<Movie> getMovies() throws IOException {
-        JSONArray movies = elasticsearchIndex.getAll(Type.MOVIE);
+        JSONArray movies = elasticsearchIndex.search(Type.MOVIE, 1000, null, null, null);
         return mapper.readValue(movies.toString(), new TypeReference<List<Movie>>() {
         });
     }
 
     @Override
-    public Movie getMovie(String id) throws IOException {
-        JSONObject movieObject = elasticsearchIndex.get(Type.MOVIE, id);
-        return mapper.readValue(movieObject.toString(), Movie.class);
+    public List<Movie> getTop10Movies() throws IOException {
+        FilterBuilder filter = FilterBuilders.notFilter(FilterBuilders.termFilter(MovieField.TOTAL_TWEETS.getName(), 0));
+        JSONArray movies = elasticsearchIndex.search(Type.MOVIE, 10, filter, MovieField.TOTAL_SENTIMENT.getName(), SortOrder.DESC);
+        return mapper.readValue(movies.toString(), new TypeReference<List<Movie>>() {
+        });
     }
 
     @Override

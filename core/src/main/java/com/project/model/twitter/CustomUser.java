@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomUser implements Serializable {
+    private static final long serialVersionUID = 8025733536276840030L;
 
     private long id;
     private String name;
@@ -63,18 +64,5 @@ public class CustomUser implements Serializable {
 
     public int getFollowersCount() {
         return followersCount;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", scree_name='" + screenName + '\'' +
-                ", location='" + location + '\'' +
-                ", profile_image_url='" + profileImageUrl + '\'' +
-                ", profile_image_url_https='" + profileImageUrlHttps + '\'' +
-                ", followers_count=" + followersCount +
-                '}';
     }
 }

@@ -2,9 +2,14 @@ package com.project.elasticsearch.index;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.count.CountRequestBuilder;
+import org.elasticsearch.action.count.CountResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -12,6 +17,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortOrder;
 import org.json.JSONArray;
@@ -47,6 +53,17 @@ public class ElasticsearchIndex {
         client.prepareIndex(INDEX, type.getName(), id).setSource(json).execute();
     }
 
+    public void bulkRemove(Type type, List<String> ids) {
+        if (ids != null) {
+            BulkRequestBuilder requestBuilder = client.prepareBulk();
+            for (String id : ids) {
+                DeleteRequest request = client.prepareDelete(INDEX, type.getName(), id).request();
+                requestBuilder.add(request);
+            }
+            requestBuilder.execute();
+        }
+    }
+
     public JSONObject get(Type type, String id) {
         GetResponse response = client.prepareGet(INDEX, type.getName(), id).execute().actionGet();
         String source = response.getSourceAsString();
@@ -54,19 +71,6 @@ public class ElasticsearchIndex {
             return new JSONObject();
         }
         return new JSONObject(source);
-    }
-
-    public JSONArray getAll(Type type) {
-        JSONArray array = new JSONArray();
-        SearchResponse response = client.prepareSearch(INDEX).setTypes(type.getName()).setSize(1000).execute().actionGet();
-        Iterator<SearchHit> iterator = response.getHits().iterator();
-        while (iterator.hasNext()) {
-            String source = iterator.next().getSourceAsString();
-            if (source != null) {
-                array.put(new JSONObject(source));
-            }
-        }
-        return array;
     }
 
     public JSONArray search(Type type, Integer limit, FilterBuilder filter, String sortField, SortOrder sortOrder) {
@@ -97,4 +101,13 @@ public class ElasticsearchIndex {
         return array;
     }
 
+    public long count(Type type, QueryBuilder query) {
+        CountRequestBuilder requestBuilder = client.prepareCount(INDEX).setTypes(type.getName());
+
+        if (query != null) {
+            requestBuilder.setQuery(query);
+        }
+        CountResponse response = requestBuilder.execute().actionGet();
+        return response.getCount();
+    }
 }

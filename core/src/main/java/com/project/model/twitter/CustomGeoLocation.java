@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomGeoLocation implements Serializable {
+    private static final long serialVersionUID = 2929227234059303893L;
 
     private double latitude;
     private double longitude;
@@ -25,13 +26,4 @@ public class CustomGeoLocation implements Serializable {
     public double getLongitude() {
         return longitude;
     }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
-    }
-
 }

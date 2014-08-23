@@ -2,6 +2,7 @@ package com.project.elasticsearch.field;
 
 public enum TweetField {
 
+    ID("id"),
     MOVIE_ID("movie_id"),
     MOVIE_NAME("movie_name"),
     SENTIMENT("sentiment"),

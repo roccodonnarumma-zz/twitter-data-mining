@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.model.movie.Movie;
 import com.project.services.movies.MovieService;
+import com.project.services.tweets.TweetService;
 
 @RestController
 public class MovieQueriesController {
 
     @Autowired
     private MovieService movieService;
+
+    @Autowired
+    private TweetService tweetService;
 
     @RequestMapping(value = "/movies", method = RequestMethod.GET)
     public String getMovies() throws IOException {
@@ -55,13 +59,38 @@ public class MovieQueriesController {
         }
         object.put("rating", movie.getMpaaRating());
         if (movie.getAlternateId() != null) {
-            object.put("imdb", movie.getAlternateId());
+            object.put("imdb", movie.getAlternateId().getImdb());
         }
-        //TODO calculate number of tweets
-        object.put("numberOfTweets", 11);
-        //TODO calculate score
-        object.put("score", "positive");
+
+        long totalTweets = tweetService.countTweets(movie.getId());
+
+        object.put("numberOfTweets", totalTweets + movie.getTotalTweets());
+
+        String score = "positive";
+        if (movie.getTotalSentiment() > 0) {
+            score = "positive";
+        } else if (movie.getTotalSentiment() < 0) {
+            score = "negative";
+        }
+        object.put("score", score);
 
         return object.toString();
+    }
+
+    @RequestMapping(value = "/movie/top10", method = RequestMethod.GET)
+    public String getTop10() throws IOException {
+        List<Movie> movies = movieService.getTop10Movies();
+
+        JSONArray results = new JSONArray();
+        for (Movie movie : movies) {
+            JSONObject object = new JSONObject();
+            object.put("id", movie.getId());
+            object.put("name", movie.getTitle());
+            object.put("thumbnail", movie.getPoster().getOriginal());
+            object.put("totalSentiment", movie.getTotalSentiment());
+            object.put("totalTweets", movie.getTotalTweets());
+            results.put(object);
+        }
+        return results.toString();
     }
 }

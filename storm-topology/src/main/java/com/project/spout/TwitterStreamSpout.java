@@ -1,6 +1,7 @@
 package com.project.spout;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -100,9 +101,15 @@ public class TwitterStreamSpout extends BaseRichSpout {
                 while (true) {
                     MovieServiceImpl movieService = MovieServiceImpl.getInstance();
                     hashtagMovies = movieService.getHashtagMovies();
-                    String[] tracks = hashtagMovies.keySet().toArray(new String[0]);
+                    Set<String> tracksSet = hashtagMovies.keySet();
+                    String[] tracks = new String[tracksSet.size()];
 
-                    LOG.info("Using tracks: {}", tracks);
+                    int count = 0;
+                    for (String track : tracksSet) {
+                        LOG.info("Using track: {}", track);
+                        tracks[count] = track;
+                        count++;
+                    }
 
                     close();
 

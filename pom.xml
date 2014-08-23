@@ -11,7 +11,8 @@
     	<module>core</module>
         <module>storm-topology</module>
         <module>elasticsearch-connector</module>
-    <module>project-api</module>
+    	<module>project-api</module>
+    	<module>batch</module>
   </modules>
     
     <dependencies>

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomStatus implements Serializable {
+    private static final long serialVersionUID = 8658287231627462851L;
 
     private long id;
 
@@ -111,23 +112,5 @@ public class CustomStatus implements Serializable {
 
     public void setSentiment(int sentiment) {
         this.sentiment = sentiment;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "id=" + id +
-                ", movie_id=" + movieId +
-                ", created_at=" + createdAt +
-                ", text='" + text + '\'' +
-                ", source='" + source + '\'' +
-                ", favorited=" + favorited +
-                ", retweeted=" + retweeted +
-                ", favorite_count=" + favoriteCount +
-                ", geo_location=" + geoLocation +
-                ", retweet_count=" + retweetCount +
-                ", user=" + user +
-                ", sentiment=" + sentiment +
-                '}';
     }
 }
