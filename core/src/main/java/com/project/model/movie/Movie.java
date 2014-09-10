@@ -3,6 +3,12 @@ package com.project.model.movie;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Movie POJO.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 

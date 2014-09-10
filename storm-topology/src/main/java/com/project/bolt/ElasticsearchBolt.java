@@ -14,6 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.model.twitter.CustomStatus;
 import com.project.services.tweets.impl.TweetServiceImpl;
 
+/**
+ * ElasticSearch Bolt implementation that receives a tuple representing a CustomStatus and saves it in Elasticsearch.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public class ElasticsearchBolt extends BaseBasicBolt {
     private static final long serialVersionUID = 3361080905463165886L;
 

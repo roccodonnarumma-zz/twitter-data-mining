@@ -29,6 +29,12 @@ import backtype.storm.utils.Utils;
 import com.project.model.twitter.CustomStatus;
 import com.project.services.movies.impl.MovieServiceImpl;
 
+/**
+ * Twitter Stream Spout implementation that opens a connection to Twitter Stream API and emits a CustomStatus.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public class TwitterStreamSpout extends BaseRichSpout {
     private static final long serialVersionUID = 5833104464703359992L;
 
@@ -44,6 +50,14 @@ public class TwitterStreamSpout extends BaseRichSpout {
 
     private Map<String, String> hashtagMovies;
 
+    /**
+     * Constructs a TwitterStreamSpout object with the given Twitter API parameters.
+     * 
+     * @param consumerKey
+     * @param consumerSecret
+     * @param token
+     * @param tokenSecret
+     */
     public TwitterStreamSpout(String consumerKey, String consumerSecret, String token, String tokenSecret) {
         this.consumerKey = consumerKey;
         this.consumerSecret = consumerSecret;
@@ -51,6 +65,14 @@ public class TwitterStreamSpout extends BaseRichSpout {
         this.tokenSecret = tokenSecret;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see backtype.storm.spout.ISpout#open(java.util.Map, backtype.storm.task.TopologyContext, backtype.storm.spout.SpoutOutputCollector)
+     * 
+     * Init method of the Spout. It creates the queue and the Twitter Stream. It launches a new Thread that every 10 minutes will fetch all the tracks and
+     * re-start filtering from Twitter's API.
+     */
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
         this.collector = collector;
@@ -122,6 +144,13 @@ public class TwitterStreamSpout extends BaseRichSpout {
         thread.start();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see backtype.storm.spout.ISpout#nextTuple()
+     * 
+     * Fetches a Status from the queue, gets the corresponding movie identifier and emits a CustomStatus.
+     */
     @Override
     public void nextTuple() {
         Status status = queue.poll();

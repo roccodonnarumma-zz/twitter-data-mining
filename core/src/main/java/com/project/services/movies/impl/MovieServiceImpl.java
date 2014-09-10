@@ -21,6 +21,14 @@ import com.project.elasticsearch.type.Type;
 import com.project.model.movie.Movie;
 import com.project.services.movies.MovieService;
 
+/**
+ * Implementation of the MovieService interface using the singleton pattern. The reason is to allow clients that cannot use Spring to get a singleton instance
+ * of this service.
+ * 
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @Service
 public class MovieServiceImpl implements MovieService {
 
@@ -43,6 +51,11 @@ public class MovieServiceImpl implements MovieService {
         return INSTANCE;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.project.services.movies.MovieService#getHashtagMovies()
+     */
     @Override
     public Map<String, String> getHashtagMovies() {
         Map<String, String> hashtagMovies = new HashMap<>();
@@ -62,12 +75,22 @@ public class MovieServiceImpl implements MovieService {
         return hashtagMovies;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.project.services.movies.MovieService#getMovie(java.lang.String)
+     */
     @Override
     public Movie getMovie(String id) throws IOException {
         JSONObject movieObject = elasticsearchIndex.get(Type.MOVIE, id);
         return mapper.readValue(movieObject.toString(), Movie.class);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.project.services.movies.MovieService#getMovies()
+     */
     @Override
     public List<Movie> getMovies() throws IOException {
         JSONArray movies = elasticsearchIndex.search(Type.MOVIE, 1000, null, null, null);
@@ -75,6 +98,11 @@ public class MovieServiceImpl implements MovieService {
         });
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.project.services.movies.MovieService#getTop10Movies()
+     */
     @Override
     public List<Movie> getTop10Movies() throws IOException {
         FilterBuilder filter = FilterBuilders.notFilter(FilterBuilders.termFilter(MovieField.TOTAL_TWEETS.getName(), 0));
@@ -83,6 +111,11 @@ public class MovieServiceImpl implements MovieService {
         });
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.project.services.movies.MovieService#saveMovie(com.project.model.movie.Movie)
+     */
     @Override
     public void saveMovie(Movie movie) throws IOException {
         String json = mapper.writeValueAsString(movie);

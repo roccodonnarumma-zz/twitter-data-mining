@@ -9,6 +9,12 @@ import twitter4j.Status;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Custom Twitter Status POJO.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomStatus implements Serializable {
     private static final long serialVersionUID = 8658287231627462851L;
@@ -66,44 +72,88 @@ public class CustomStatus implements Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getMovieId() {
         return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
     }
 
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getSource() {
         return source;
     }
 
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     public boolean isFavorited() {
         return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
     }
 
     public boolean isRetweeted() {
         return retweeted;
     }
 
+    public void setRetweeted(boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
     public int getFavoriteCount() {
         return favoriteCount;
+    }
+
+    public void setFavoriteCount(int favoriteCount) {
+        this.favoriteCount = favoriteCount;
     }
 
     public CustomGeoLocation getGeoLocation() {
         return geoLocation;
     }
 
+    public void setGeoLocation(CustomGeoLocation geoLocation) {
+        this.geoLocation = geoLocation;
+    }
+
     public int getRetweetCount() {
         return retweetCount;
     }
 
+    public void setRetweetCount(int retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
     public CustomUser getUser() {
         return user;
+    }
+
+    public void setUser(CustomUser user) {
+        this.user = user;
     }
 
     public int getSentiment() {

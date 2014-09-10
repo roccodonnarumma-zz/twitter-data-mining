@@ -1,5 +1,11 @@
 package com.project.elasticsearch.field;
 
+/**
+ * Enum for Elasticsearch fields on Tweet type.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public enum TweetField {
 
     ID("id"),

@@ -1,5 +1,11 @@
 package com.project.elasticsearch.type;
 
+/**
+ * Enum that contains the different Elasticsearch types in the index.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public enum Type {
 
     TWEET("tweet"),

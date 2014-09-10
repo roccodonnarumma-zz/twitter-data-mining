@@ -26,9 +26,23 @@ import com.project.bolt.ElasticsearchBolt;
 import com.project.bolt.SentimentBolt;
 import com.project.spout.TwitterStreamSpout;
 
+/**
+ * Main class that creates a Storm Topology and submit it to the cluster.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public class TwitterSentimentTopology {
     private static final Logger LOG = LoggerFactory.getLogger(TwitterSentimentTopology.class);
 
+    /**
+     * Main method that builds a Topology using the properties in twitter/config.properties.
+     * 
+     * @param args
+     * @throws AlreadyAliveException
+     * @throws InvalidTopologyException
+     * @throws IOException
+     */
     public static void main(String[] args) throws AlreadyAliveException, InvalidTopologyException, IOException {
         Properties properties = new Properties();
         properties.load(TwitterSentimentTopology.class.getClassLoader().getResourceAsStream("twitter/config.properties"));

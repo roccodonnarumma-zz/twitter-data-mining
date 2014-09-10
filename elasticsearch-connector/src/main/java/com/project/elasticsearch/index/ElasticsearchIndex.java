@@ -26,6 +26,12 @@ import org.springframework.stereotype.Service;
 
 import com.project.elasticsearch.type.Type;
 
+/**
+ * Service class that provides common methods on the Elasticsearch index.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @Service
 public class ElasticsearchIndex {
 
@@ -33,6 +39,10 @@ public class ElasticsearchIndex {
 
     private Client client;
 
+    /**
+     * Constructs an ElasticsearchIndex by using a TransportClient that connects to an existing cluster. The hostname and port are specified in the properties
+     * file elasticsearch/elasticsearch.properties.
+     */
     public ElasticsearchIndex() {
         try {
             Properties properties = new Properties();
@@ -45,14 +55,43 @@ public class ElasticsearchIndex {
         }
     }
 
+    /**
+     * Constructs an ElasticsearchIndex using the given client.
+     * 
+     * @param client
+     */
+    public ElasticsearchIndex(Client client) {
+        this.client = client;
+    }
+
+    /**
+     * Indexes the map as a document with the given id in the given type.
+     * 
+     * @param type
+     * @param id
+     * @param map
+     */
     public void index(Type type, String id, Map<String, Object> map) {
         client.prepareIndex(INDEX, type.getName(), id).setSource(map).execute();
     }
 
+    /**
+     * Indexes the JSON String as a document with the given id in the given type.
+     * 
+     * @param type
+     * @param id
+     * @param json
+     */
     public void index(Type type, String id, String json) {
         client.prepareIndex(INDEX, type.getName(), id).setSource(json).execute();
     }
 
+    /**
+     * Removes all documents that matches the given ids from the given type.
+     * 
+     * @param type
+     * @param ids
+     */
     public void bulkRemove(Type type, List<String> ids) {
         if (ids != null) {
             BulkRequestBuilder requestBuilder = client.prepareBulk();
@@ -64,6 +103,13 @@ public class ElasticsearchIndex {
         }
     }
 
+    /**
+     * Returns the document with the given id and type. If not document exists, it returns an empty object.
+     * 
+     * @param type
+     * @param id
+     * @return the document with the given id and type. If not document exists, it returns an empty object.
+     */
     public JSONObject get(Type type, String id) {
         GetResponse response = client.prepareGet(INDEX, type.getName(), id).execute().actionGet();
         String source = response.getSourceAsString();
@@ -73,6 +119,17 @@ public class ElasticsearchIndex {
         return new JSONObject(source);
     }
 
+    /**
+     * Performs a search on the given type. Returns only limit elements if specified. The filter is applied if is not null. The sortField is applied with the
+     * given sortOrder if is not null.
+     * 
+     * @param type
+     * @param limit
+     * @param filter
+     * @param sortField
+     * @param sortOrder
+     * @return an array of matching documents.
+     */
     public JSONArray search(Type type, Integer limit, FilterBuilder filter, String sortField, SortOrder sortOrder) {
         JSONArray array = new JSONArray();
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(INDEX)
@@ -101,6 +158,13 @@ public class ElasticsearchIndex {
         return array;
     }
 
+    /**
+     * Returns the documents count on the given type for the given query.
+     * 
+     * @param type
+     * @param query
+     * @return the documents count on the given type for the given query.
+     */
     public long count(Type type, QueryBuilder query) {
         CountRequestBuilder requestBuilder = client.prepareCount(INDEX).setTypes(type.getName());
 
@@ -109,5 +173,11 @@ public class ElasticsearchIndex {
         }
         CountResponse response = requestBuilder.execute().actionGet();
         return response.getCount();
+    }
+
+    public void closeClient() {
+        if (client != null) {
+            client.close();
+        }
     }
 }

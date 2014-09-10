@@ -8,6 +8,12 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.WritableComparable;
 
+/**
+ * Custom POJO used as a wrapper of fields that needs to be passed from the map phase into the reduce phase.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public class Tweet implements WritableComparable<Tweet> {
 
     private LongWritable tweetId;

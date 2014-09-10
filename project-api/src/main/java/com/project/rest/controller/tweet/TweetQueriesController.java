@@ -12,24 +12,49 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.model.twitter.CustomStatus;
 import com.project.services.tweets.TweetService;
 
+/**
+ * REST controller that contains all the methods that causes an read (GET) for tweets.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @RestController
 public class TweetQueriesController {
 
     @Autowired
     private TweetService tweetService;
 
+    /**
+     * GET API that returns the latest tweet as a JSON String.
+     * 
+     * @return the latest tweet as a JSON String.
+     * @throws IOException
+     */
     @RequestMapping(value = "/tweet/latest", method = RequestMethod.GET)
     public String getLatestTweet() throws IOException {
         CustomStatus status = tweetService.getLatestTweet();
         return buildJson(status);
     }
 
+    /**
+     * GET API that returns the latest tweet for the given movie identifier as a JSON String.
+     * 
+     * @param movieId
+     * @return the latest tweet for the given movie identifier as a JSON String.
+     * @throws IOException
+     */
     @RequestMapping(value = "/tweet/latest/{movieId}", method = RequestMethod.GET)
     public String getLatestTweet(@PathVariable String movieId) throws IOException {
         CustomStatus status = tweetService.getLatestTweet(movieId);
         return buildJson(status);
     }
 
+    /**
+     * Returns the JSON representation String of the given Status.
+     * 
+     * @param status
+     * @return the JSON representation String of the given Status.
+     */
     private String buildJson(CustomStatus status) {
         if (status == null) {
             return "{}";

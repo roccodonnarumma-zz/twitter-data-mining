@@ -15,6 +15,12 @@ import com.project.model.movie.Movie;
 import com.project.services.movies.MovieService;
 import com.project.services.tweets.TweetService;
 
+/**
+ * REST controller that contains all the methods that causes an read (GET) for movies.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @RestController
 public class MovieQueriesController {
 
@@ -24,6 +30,12 @@ public class MovieQueriesController {
     @Autowired
     private TweetService tweetService;
 
+    /**
+     * GET API that returns all the movies as a JSON array.
+     * 
+     * @return all the movies as a JSON array.
+     * @throws IOException
+     */
     @RequestMapping(value = "/movies", method = RequestMethod.GET)
     public String getMovies() throws IOException {
         List<Movie> movies = movieService.getMovies();
@@ -43,6 +55,13 @@ public class MovieQueriesController {
         return results.toString();
     }
 
+    /**
+     * GET API that returns the movie for the given id as a JSON String.
+     * 
+     * @param id
+     * @return the movie for the given id as a JSON String.
+     * @throws IOException
+     */
     @RequestMapping(value = "/movie/{id}", method = RequestMethod.GET)
     public String getMovie(@PathVariable String id) throws IOException {
         Movie movie = movieService.getMovie(id);
@@ -77,6 +96,12 @@ public class MovieQueriesController {
         return object.toString();
     }
 
+    /**
+     * GET API that returns the list of top 10 movies as a JSON array.
+     * 
+     * @return the list of top 10 movies as a JSON array.
+     * @throws IOException
+     */
     @RequestMapping(value = "/movie/top10", method = RequestMethod.GET)
     public String getTop10() throws IOException {
         List<Movie> movies = movieService.getTop10Movies();

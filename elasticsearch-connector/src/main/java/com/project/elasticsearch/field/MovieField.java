@@ -1,5 +1,11 @@
 package com.project.elasticsearch.field;
 
+/**
+ * Enum for Elasticsearch fields on Movie type.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public enum MovieField {
 
     ID("id"),

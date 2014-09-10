@@ -5,6 +5,12 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.model.movie.Movie;
 
+/**
+ * POJO that contains the result of Rotten Tomatoes API.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MovieCronResult {
 

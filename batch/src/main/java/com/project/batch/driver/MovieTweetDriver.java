@@ -15,6 +15,13 @@ import com.project.batch.map.MovieTweetMapper;
 import com.project.batch.model.Tweet;
 import com.project.batch.reduce.MovieTweetReducer;
 
+/**
+ * Main class that is the resposible for creating a MapReduce job and run it. It gets as paramater the path location of input files. It runs forever and waits 2
+ * minutes before running the next job.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public class MovieTweetDriver {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {

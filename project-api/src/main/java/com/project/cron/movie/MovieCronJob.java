@@ -14,6 +14,12 @@ import com.project.cron.converter.RottenTomatoesMessageConverter;
 import com.project.model.movie.Movie;
 import com.project.services.movies.MovieService;
 
+/**
+ * A Spring scheduled task implementation to get the movies that are on theaters from the Rotten Tomatoes API.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 @Component
 public class MovieCronJob {
 
@@ -27,6 +33,11 @@ public class MovieCronJob {
     @Autowired
     private MovieService movieService;
 
+    /**
+     * Construct a MovieCronJob loading the properties for the Rotten Tomatoes API from the properties files movie/rotten-tomatoes.properties.
+     * 
+     * @throws IOException
+     */
     public MovieCronJob() throws IOException {
         Properties properties = new Properties();
         properties.load(MovieCronJob.class.getClassLoader().getResourceAsStream("movie/rotten-tomatoes.properties"));
@@ -36,15 +47,30 @@ public class MovieCronJob {
         country = properties.getProperty("rotten.tomatoes.country");
     }
 
+    /**
+     * Init method that runs when the Spring context is loaded.
+     * 
+     * @throws IOException
+     */
     public void init() throws IOException {
         fetchMoviesOnTheater();
     }
 
+    /**
+     * Runs every hour.
+     * 
+     * @throws IOException
+     */
     @Scheduled(cron = "* 0 * * * ?")
     public void runEveryHour() throws IOException {
         fetchMoviesOnTheater();
     }
 
+    /**
+     * Fetches and saves all the movies that are currently on theaters using the Rotten Tomatoes API. If the movie is already saved, then it does not save it.
+     * 
+     * @throws IOException
+     */
     private void fetchMoviesOnTheater() throws IOException {
         RestTemplate restTemplate = new RestTemplate();
         List<HttpMessageConverter<?>> messageConverters = restTemplate.getMessageConverters();

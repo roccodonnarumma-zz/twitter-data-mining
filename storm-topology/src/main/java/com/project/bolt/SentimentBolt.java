@@ -25,6 +25,14 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
+/**
+ * Implementation of the sentiment Bolt that receives a tuple representing a CustomStatus, calculates the sentiment, adds the sentiment to the status and emits
+ * the status. The sentiment is a number between -2 and 2. Negative numbers indicate a negative sentiment, 0 indicates a neutral sentiment and positive numbers
+ * indicate a positive sentiment.
+ * 
+ * @author rdonnarumma
+ * 
+ */
 public class SentimentBolt extends BaseBasicBolt {
     private static final long serialVersionUID = 3201910429837431413L;
 
