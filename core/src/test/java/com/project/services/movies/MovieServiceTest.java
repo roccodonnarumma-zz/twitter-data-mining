@@ -26,6 +26,7 @@ public class MovieServiceTest {
 
     private static MovieServiceImpl movieService;
     private static ElasticsearchIndex index;
+    private static Client client;
 
     @BeforeClass
     public static void setup() throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException,
@@ -35,7 +36,7 @@ public class MovieServiceTest {
         constructor.setAccessible(true);
         movieService = (MovieServiceImpl)constructor.newInstance();
 
-        Client client = NodeBuilder.nodeBuilder().node().client();
+        client = NodeBuilder.nodeBuilder().node().client();
 
         index = new ElasticsearchIndex(client);
         movieService.setElasticsearchIndex(index);

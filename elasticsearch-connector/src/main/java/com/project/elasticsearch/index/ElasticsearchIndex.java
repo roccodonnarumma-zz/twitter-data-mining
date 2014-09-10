@@ -72,7 +72,7 @@ public class ElasticsearchIndex {
      * @param map
      */
     public void index(Type type, String id, Map<String, Object> map) {
-        client.prepareIndex(INDEX, type.getName(), id).setSource(map).execute();
+        client.prepareIndex(INDEX, type.getName(), id).setSource(map).execute().actionGet();
     }
 
     /**
@@ -83,7 +83,7 @@ public class ElasticsearchIndex {
      * @param json
      */
     public void index(Type type, String id, String json) {
-        client.prepareIndex(INDEX, type.getName(), id).setSource(json).execute();
+        client.prepareIndex(INDEX, type.getName(), id).setSource(json).execute().actionGet();
     }
 
     /**
@@ -99,7 +99,7 @@ public class ElasticsearchIndex {
                 DeleteRequest request = client.prepareDelete(INDEX, type.getName(), id).request();
                 requestBuilder.add(request);
             }
-            requestBuilder.execute();
+            requestBuilder.execute().actionGet();
         }
     }
 
